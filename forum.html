@@ -238,8 +238,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 <script>
 var sb=window.supabase.createClient(
-  'https://lduzxgmmmzldigbvzmpt.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkdXp4Z21tbXpsZGlnYnZ6bXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODYzMDYsImV4cCI6MjA4OTg2MjMwNn0.7jlnzw7mHe5g2tnLHJYdyk5QBQKWtDQknQCrZplvHDg'
+  'https://lduzxgmmmzldigbvzmpt.supabase.co',,
+  {auth:{storageKey:'sirketiniyorumla-auth',storage:window.localStorage}}
+);
 );
 
 var currentUser=null,currentProfile=null,authMode='login';
