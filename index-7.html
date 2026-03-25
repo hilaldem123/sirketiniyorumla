@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>şirketiniyorumla.com — İş Yerinizi Değerlendirin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-dk:#085041;--green-md:#0F6E56;--green-lt:#1D9E75;
+  --green-pal:#E1F5EE;--green-mid:#5DCAA5;
+  --bg:#F7F7F5;--surface:#fff;--border:#E5E4DF;
+  --text:#1A1A18;--text2:#6B6B67;--text3:#9E9E9A;
+  --radius:10px;--radius-lg:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+.logo{font-family:'DM Serif Display',serif;font-size:22px;color:var(--green-dk);letter-spacing:-0.3px;cursor:pointer;text-decoration:none}
+.logo span{color:var(--green-lt)}
+.nav-links{display:flex;gap:20px;align-items:center}
+.nav-links a{font-size:14px;color:var(--text2);text-decoration:none;cursor:pointer;transition:color 0.15s}
+.nav-links a:hover{color:var(--text)}
+.nav-right{display:flex;gap:10px;align-items:center}
+.btn-nav{background:var(--green-md);color:#fff;border:none;padding:8px 18px;border-radius:var(--radius);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:background 0.15s}
+.btn-nav:hover{background:var(--green-dk)}
+.btn-outline{background:none;color:var(--green-md);border:1px solid var(--green-md);padding:7px 16px;border-radius:var(--radius);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.15s}
+.btn-outline:hover{background:var(--green-pal)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--green-pal);color:var(--green-md);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--green-mid)}
+.user-menu{position:relative}
+.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:0 8px 24px rgba(0,0,0,0.1);min-width:190px;z-index:100;display:none;overflow:hidden}
+.user-dropdown.open{display:block}
+.user-dropdown a{display:block;padding:10px 14px;font-size:13px;color:var(--text2);cursor:pointer;transition:background 0.1s}
+.user-dropdown a:hover{background:var(--bg);color:var(--text)}
+.user-dropdown .divider{height:1px;background:var(--border)}
+.hero{background:linear-gradient(140deg,var(--green-dk) 0%,var(--green-md) 55%,var(--green-lt) 100%);padding:4rem 2rem 3rem;text-align:center;color:#fff}
+.hero h1{font-family:'DM Serif Display',serif;font-size:46px;margin-bottom:10px;line-height:1.15;letter-spacing:-0.5px}
+.hero h1 em{font-style:italic;color:#9FE1CB}
+.hero p{font-size:17px;opacity:0.82;margin-bottom:2rem;font-weight:300}
+.search-wrap{background:#fff;border-radius:50px;display:flex;max-width:580px;margin:0 auto;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.18)}
+.search-wrap input{flex:1;padding:15px 22px;border:none;outline:none;font-size:15px;color:var(--text);font-family:'DM Sans',sans-serif}
+.search-wrap button{background:var(--green-lt);color:#fff;border:none;padding:15px 28px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.statsbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0.8rem 2rem;display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap}
+.statitem{font-size:13px;color:var(--text2)}
+.statitem b{color:var(--text);font-weight:500}
+.main{max-width:1060px;margin:0 auto;padding:2rem 1.5rem;display:grid;grid-template-columns:1fr 300px;gap:1.5rem;align-items:start}
+.section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:14px}
+.ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:12px;cursor:pointer;transition:all 0.15s;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.ccard:hover{border-color:#B4B2A9;box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-1px)}
+.cheader{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.clogo{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:17px;flex-shrink:0}
+.cname{font-size:16px;font-weight:500;margin-bottom:2px}
+.cmeta{font-size:12px;color:var(--text2)}
+.rec-badge{font-size:11px;padding:4px 11px;border-radius:20px;background:var(--green-pal);color:var(--green-md);border:1px solid var(--green-mid);margin-left:auto;flex-shrink:0;font-weight:500}
+.rating-row{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.bigrating{font-size:34px;font-weight:400;color:var(--green-lt);font-family:'DM Serif Display',serif;line-height:1}
+.stars-row{display:flex;gap:2px}
+.rcount{font-size:11px;color:var(--text3);margin-top:3px}
+.sub-block{margin-left:auto;display:flex;flex-direction:column;gap:4px}
+.sub-r{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text2)}
+.sub-bar{width:72px;height:4px;background:#E5E4DF;border-radius:2px;overflow:hidden}
+.sub-fill{height:100%;background:var(--green-lt);border-radius:2px}
+.ctags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ctag{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg);color:var(--text2);border:1px solid var(--border)}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem;margin-bottom:12px}
+.scard h4{font-size:14px;font-weight:500;margin-bottom:12px}
+.btn-full{width:100%;background:var(--green-md);color:#fff;border:none;padding:11px;border-radius:var(--radius);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:background 0.15s;margin-bottom:8px}
+.btn-full:hover{background:var(--green-dk)}
+.btn-full-outline{width:100%;background:none;color:var(--green-md);border:1px solid var(--green-md);padding:10px;border-radius:var(--radius);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.15s}
+.btn-full-outline:hover{background:var(--green-pal)}
+.catrow{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:6px 7px;border-radius:8px;cursor:pointer;transition:background 0.1s;color:var(--text2)}
+.catrow:hover{background:var(--bg);color:var(--text)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);padding:1.75rem;width:min(540px,100%);max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.mhead h3{font-size:18px;font-weight:500}
+.xbtn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--text2);line-height:1;padding:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.fg{margin-bottom:14px;position:relative}
+.fg label{display:block;font-size:12px;font-weight:500;margin-bottom:6px;color:var(--text2)}
+.fg input,.fg textarea,.fg select{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.15s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--green-lt)}
+.fg textarea{min-height:85px;resize:vertical}
+.salary-input-wrap{display:flex;gap:8px}
+.salary-input-wrap input{flex:1}
+.salary-input-wrap select{width:100px;flex-shrink:0}
+.starpick{display:flex;gap:6px;margin-top:4px}
+.starbtn{background:none;border:none;cursor:pointer;font-size:28px;opacity:0.2;line-height:1;padding:0;transition:opacity 0.1s;color:#F59E0B}
+.starbtn.on{opacity:1}
+.vbtns{display:flex;gap:7px;margin-top:4px}
+.vbtn{flex:1;padding:8px 6px;border:1px solid var(--border);border-radius:var(--radius);background:none;cursor:pointer;font-size:12px;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.vbtn.sel{border-color:var(--green-lt);background:var(--green-pal);color:var(--green-md);font-weight:500}
+.submit-btn{width:100%;background:var(--green-md);color:#fff;border:none;padding:12px;border-radius:var(--radius);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;margin-top:6px;transition:background 0.15s}
+.submit-btn:hover{background:var(--green-dk)}
+.submit-btn:disabled{background:#B4B2A9;cursor:not-allowed}
+.anon-toggle{display:flex;gap:8px;margin-top:4px}
+.anon-btn{flex:1;padding:10px 8px;border:1px solid var(--border);border-radius:var(--radius);background:none;cursor:pointer;font-size:13px;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all 0.15s;text-align:center}
+.anon-btn.sel{border-color:var(--green-lt);background:var(--green-pal);color:var(--green-md);font-weight:500}
+.anon-note{font-size:11px;color:var(--text3);margin-top:6px}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.25rem;gap:0}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:14px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;border-top:none;border-left:none;border-right:none;background:none;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.auth-tab.active{color:var(--green-md);border-bottom-color:var(--green-md);font-weight:500}
+.det-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1rem;gap:0}
+.det-tab{padding:10px 16px;font-size:14px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;border-top:none;border-left:none;border-right:none;background:none;font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.det-tab.active{color:var(--green-md);border-bottom-color:var(--green-md);font-weight:500}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}
+.sub-card{background:var(--bg);border-radius:var(--radius);padding:9px 11px}
+.sub-card .sub-label{font-size:10px;color:var(--text2);margin-bottom:4px}
+.sub-card .sub-val{font-size:15px;font-weight:500;color:var(--green-lt);margin-right:7px}
+.rev-item{border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.rev-who{font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rev-date{font-size:11px;color:var(--text3)}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.pc-box{border-radius:var(--radius);padding:9px 11px}
+.pc-box.pos{background:#E1F5EE}
+.pc-box.neg{background:#FAECE7}
+.pc-label{font-size:10px;font-weight:500;margin-bottom:4px}
+.pc-box.pos .pc-label{color:var(--green-md)}
+.pc-box.neg .pc-label{color:#993C1D}
+.pc-box p{font-size:12px;color:var(--text2);line-height:1.5}
+.advice-row{font-size:12px;color:var(--text2);margin-top:9px;line-height:1.5;padding:8px 10px;background:var(--bg);border-radius:var(--radius);border-left:3px solid var(--green-lt)}
+.helpful-row{display:flex;align-items:center;gap:8px;margin-top:9px}
+.helpful-label{font-size:11px;color:var(--text3)}
+.helpful-btn{background:none;border:1px solid var(--border);padding:4px 11px;border-radius:20px;font-size:11px;cursor:pointer;color:var(--text2);font-family:'DM Sans',sans-serif}
+.anon-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:#F1EFE8;color:var(--text3);border:1px solid var(--border)}
+.named-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--green-pal);color:var(--green-md);border:1px solid var(--green-mid)}
+.salary-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.salary-row:last-child{border-bottom:none}
+.salary-position{font-size:13px;font-weight:500}
+.salary-meta{font-size:11px;color:var(--text2);margin-top:2px}
+.salary-amount{font-size:16px;font-weight:500;color:var(--green-lt);text-align:right}
+.salary-currency{font-size:10px;color:var(--text3);text-align:right}
+.salary-avg-box{background:var(--green-pal);border:1px solid var(--green-mid);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:50;max-height:200px;overflow-y:auto;margin-top:2px}
+.autocomplete-item{padding:10px 13px;font-size:14px;cursor:pointer;color:var(--text);transition:background 0.1s}
+.autocomplete-item:hover{background:var(--bg)}
+.loading{text-align:center;padding:3rem;color:var(--text2);font-size:14px}
+.spinner{display:inline-block;width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--green-lt);border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text2)}
+.empty-state p{font-size:15px;margin-bottom:8px}
+.empty-state span{font-size:13px;color:var(--text3)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green-dk);color:#fff;padding:12px 24px;border-radius:var(--radius-lg);font-size:14px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.toast.show{opacity:1}
+.error-toast{background:#993C1D}
+.footer{background:var(--green-dk);color:#9FE1CB;text-align:center;padding:2rem;font-size:13px;margin-top:3rem}
+.footer strong{color:#fff;font-weight:500}
+@media(max-width:700px){.main{grid-template-columns:1fr}.sidebar{display:none}.hero h1{font-size:32px}.nav-links{display:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="logo" href="#">şirketini<span>yorumla</span></a>
+  <div class="nav-links">
+    <a onclick="document.getElementById('clist').scrollIntoView({behavior:'smooth'})">Şirketler</a>
+    <a onclick="requireAuth(openReview)">Yorum Yaz</a>
+    <a href="forum.html">Forum</a>
+    <a onclick="requireAuth(openSalary)">Maaş Ekle</a>
+  </div>
+  <div class="nav-right" id="navRight">
+    <button class="btn-outline" onclick="openAuth('login')">Giriş Yap</button>
+    <button class="btn-nav" onclick="openAuth('register')">Üye Ol</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>İş yerinizi<br><em>anonim veya isimli</em> değerlendirin</h1>
+  <p>Türkiye'nin en büyük şirket yorum platformu</p>
+  <div class="search-wrap">
+    <input type="text" id="qi" autocomplete="off" placeholder="Şirket adı, sektör veya pozisyon ara..." oninput="doFilter()">
+    <button onclick="doFilter()">Ara</button>
+  </div>
+</section>
+
+<div class="statsbar">
+  <span class="statitem"><b id="stat-reviews">...</b> yorum</span>
+  <span class="statitem"><b id="stat-companies">...</b> şirket</span>
+  <span class="statitem"><b id="stat-salaries">...</b> maaş verisi</span>
+</div>
+
+<div class="main">
+  <div>
+    <div class="section-title">Şirketler</div>
+    <div id="clist"><div class="loading"><div class="spinner"></div><br>Yükleniyor...</div></div>
+  </div>
+  <div class="sidebar">
+    <div class="scard">
+      <h4>Katkıda bulunun</h4>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5">Yorum veya maaş verisi paylaşın.</p>
+      <button class="btn-full" onclick="requireAuth(openReview)">+ Yorum Yaz</button>
+      <button class="btn-full-outline" onclick="requireAuth(openSalary)">💰 Maaş Ekle</button>
+    </div>
+    <div class="scard">
+      <h4>Sektörler</h4>
+      <div id="seclist"></div>
+    </div>
+    <div class="scard">
+      <h4>Popüler aramalar</h4>
+      <div class="ctags" id="ptags"></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="authModal">
+  <div class="modal" style="width:min(420px,100%)">
+    <div class="mhead">
+      <h3 id="authTitle">Giriş Yap</h3>
+      <button class="xbtn" onclick="closeM('authModal')">×</button>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Giriş Yap</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Üye Ol</button>
+    </div>
+    <div class="fg" id="usernameField" style="display:none">
+      <label>Kullanıcı adı</label>
+      <input type="text" id="authUsername" placeholder="Kullanıcı adınızı seçin">
+    </div>
+    <div class="fg">
+      <label>E-posta</label>
+      <input type="email" id="authEmail" placeholder="ornek@email.com">
+    </div>
+    <div class="fg">
+      <label>Şifre</label>
+      <input type="password" id="authPassword" placeholder="En az 6 karakter">
+    </div>
+    <button class="submit-btn" id="authBtn" onclick="handleAuth()">Giriş Yap</button>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px" id="authNote">
+      Hesabınız yok mu? <a onclick="switchTab('register')" style="color:var(--green-md);cursor:pointer">Üye olun</a>
+    </p>
+  </div>
+</div>
+
+<!-- YORUM MODAL -->
+<div class="overlay" id="revModal">
+  <div class="modal">
+    <div class="mhead">
+      <h3>Şirket değerlendirmesi yaz</h3>
+      <button class="xbtn" onclick="closeM('revModal')">×</button>
+    </div>
+    <div class="fg">
+      <label>Şirket adı *</label>
+      <input type="text" id="cni" placeholder="Şirket adını yazın..." oninput="onCompanyInput('cni','acList')" autocomplete="off">
+      <div class="autocomplete-list" id="acList" style="display:none"></div>
+    </div>
+    <div class="fg"><label>Sektör</label><input type="text" id="secInput" placeholder="Örn: Teknoloji, Perakende..."></div>
+    <div class="fg"><label>Şehir</label><input type="text" id="cityInput" placeholder="Örn: İstanbul, Ankara..."></div>
+    <div class="fg"><label>Çalışan sayısı</label><input type="text" id="sizeInput" placeholder="Örn: 1-50, 500+, 10.000+"></div>
+    <div class="fg"><label>Pozisyon</label><input type="text" id="posi" placeholder="Örn: Yazılım Geliştirici, Müdür..."></div>
+    <div class="fg">
+      <label>Genel puan *</label>
+      <div class="starpick" id="sp">
+        <button class="starbtn" onclick="setSt(1)">★</button>
+        <button class="starbtn" onclick="setSt(2)">★</button>
+        <button class="starbtn" onclick="setSt(3)">★</button>
+        <button class="starbtn" onclick="setSt(4)">★</button>
+        <button class="starbtn" onclick="setSt(5)">★</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Tavsiye eder misiniz?</label>
+      <div class="vbtns">
+        <button class="vbtn" id="vr" onclick="setV('yes')">👍 Tavsiye ederim</button>
+        <button class="vbtn" id="vn" onclick="setV('neutral')">😐 Kararsızım</button>
+        <button class="vbtn" id="vx" onclick="setV('no')">👎 Tavsiye etmem</button>
+      </div>
+    </div>
+    <div class="fg"><label>Olumlu yönler</label><textarea id="pti" placeholder="Şirketin iyi tarafları nelerdi?"></textarea></div>
+    <div class="fg"><label>Geliştirilmesi gerekenler</label><textarea id="cti" placeholder="Neler daha iyi olabilirdi?"></textarea></div>
+    <div class="fg"><label>Yönetime tavsiye</label><textarea id="advi" placeholder="CEO ve yönetim kuruluna ne söylemek isterdiniz?"></textarea></div>
+    <div class="fg">
+      <label>Yorumunuz nasıl görünsün?</label>
+      <div class="anon-toggle">
+        <button class="anon-btn sel" id="anonBtn" onclick="setAnon(true)">🎭 Anonim</button>
+        <button class="anon-btn" id="namedBtn" onclick="setAnon(false)">👤 İsimli (<span id="previewUsername">siz</span>)</button>
+      </div>
+      <p class="anon-note" id="anonNote">Yorumunuz anonim olarak yayınlanacak.</p>
+    </div>
+    <div style="border-top:1px solid var(--border);margin:16px 0;padding-top:16px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div><div style="font-size:13px;font-weight:500">💰 Maaş bilgisi ekle (isteğe bağlı)</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Topluluk için çok değerli!</div></div><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" id="salaryToggle" onchange="toggleSalarySection()" style="width:auto;padding:0;border:none"> Ekle</label></div><div id="salarySection" style="display:none"><div class="fg" style="margin-bottom:10px"><label>Aylık net maaş</label><div class="salary-input-wrap"><input type="number" id="rev-sal-amount" placeholder="Örn: 45000" min="0"><select id="rev-sal-currency"><option value="TRY">₺ TRY</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option></select></div></div><div class="fg" style="margin-bottom:0"><label>Deneyim (yıl)</label><input type="number" id="rev-sal-exp" placeholder="Örn: 3" min="0" max="50"></div></div></div>
+    <button class="submit-btn" id="submitBtn" onclick="submitR()">Anonim Olarak Gönder</button>
+  </div>
+</div>
+
+<!-- MAAŞ MODAL -->
+<div class="overlay" id="salaryModal">
+  <div class="modal">
+    <div class="mhead">
+      <h3>Maaş verisi ekle</h3>
+      <button class="xbtn" onclick="closeM('salaryModal')">×</button>
+    </div>
+    <div class="fg">
+      <label>Şirket adı *</label>
+      <input type="text" id="sal-company" placeholder="Şirket adını yazın..." oninput="onCompanyInput('sal-company','sal-acList')" autocomplete="off">
+      <div class="autocomplete-list" id="sal-acList" style="display:none"></div>
+    </div>
+    <div class="fg"><label>Pozisyon *</label><input type="text" id="sal-position" placeholder="Örn: Senior Yazılım Geliştirici"></div>
+    <div class="fg">
+      <label>Aylık maaş (net) *</label>
+      <div class="salary-input-wrap">
+        <input type="number" id="sal-amount" placeholder="Örn: 45000" min="0">
+        <select id="sal-currency">
+          <option value="TRY">₺ TRY</option>
+          <option value="USD">$ USD</option>
+          <option value="EUR">€ EUR</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Deneyim (yıl)</label><input type="number" id="sal-exp" placeholder="Örn: 3" min="0" max="50"></div>
+    <div class="fg"><label>Şehir</label><input type="text" id="sal-city" placeholder="Örn: İstanbul"></div>
+    <div class="fg">
+      <label>Anonim olarak paylaş?</label>
+      <div class="anon-toggle">
+        <button class="anon-btn sel" id="salAnonBtn" onclick="setSalAnon(true)">🎭 Anonim</button>
+        <button class="anon-btn" id="salNamedBtn" onclick="setSalAnon(false)">👤 İsimli</button>
+      </div>
+    </div>
+    <button class="submit-btn" id="salSubmitBtn" onclick="submitSalary()">Maaş Verisini Ekle</button>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">Veriler anonim olarak istatistik amaçlı kullanılır.</p>
+  </div>
+</div>
+
+<!-- DETAY MODAL -->
+<div class="overlay" id="detModal">
+  <div class="modal" id="detContent" style="width:min(620px,100%)"></div>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<footer class="footer">
+  <strong>şirketiniyorumla.com</strong> &nbsp;·&nbsp; Türkiye'nin şeffaf iş dünyası platformu &nbsp;·&nbsp; © 2026
+</footer>
+
+<script>
+var sb=window.supabase.createClient(
+  'https://lduzxgmmmzldigbvzmpt.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkdXp4Z21tbXpsZGlnYnZ6bXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODYzMDYsImV4cCI6MjA4OTg2MjMwNn0.7jlnzw7mHe5g2tnLHJYdyk5QBQKWtDQknQCrZplvHDg',
+  {auth:{storageKey:'sirketiniyorumla-auth',storage:window.localStorage}}
+);
+
+var allCompanies=[],visCompanies=[];
+var selSt=0,selV='',isAnon=true,isSalAnon=true;
+var selectedCompanyId=null,selectedSalCompanyId=null;
+var currentUser=null,currentProfile=null;
+var authMode='login';
+
+var logoColors=[
+  {bg:'#E1F5EE',fc:'#0F6E56'},{bg:'#EEEDFE',fc:'#534AB7'},
+  {bg:'#FAECE7',fc:'#993C1D'},{bg:'#E6F1FB',fc:'#185FA5'},
+  {bg:'#FAEEDA',fc:'#854F0B'},{bg:'#EAF3DE',fc:'#3B6D11'},
+  {bg:'#FBEAF0',fc:'#993556'},{bg:'#E1F5EE',fc:'#085041'}
+];
+var ptags=['Uzaktan çalışma','Esnek saat','İyi yönetici','Kariyer fırsatı','Yüksek maaş','Aile ortamı','Şeffaf yönetim'];
+var secs=['Teknoloji','Perakende','Finans','Üretim','Telekomünikasyon','E-ticaret','Sağlık','Eğitim'];
+
+function getColor(n){var i=0;for(var j=0;j<n.length;j++)i+=n.charCodeAt(j);return logoColors[i%logoColors.length];}
+function getInitials(n){var w=n.trim().split(' ');return w.length===1?w[0].substring(0,2).toUpperCase():(w[0][0]+w[w.length-1][0]).toUpperCase();}
+function starSVG(r,sz){sz=sz||15;return[1,2,3,4,5].map(function(i){var f=i<=Math.floor(r),h=!f&&(i-0.5)<=r,c=f?'#1D9E75':h?'url(#hg)':'#D3D1C7';return'<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" style="display:inline-block;vertical-align:middle"><defs><linearGradient id="hg"><stop offset="50%" stop-color="#1D9E75"/><stop offset="50%" stop-color="#D3D1C7"/></linearGradient></defs><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="'+c+'" stroke="none"/></svg>';}).join('');}
+function barHTML(v){return'<div class="sub-bar"><div class="sub-fill" style="width:'+(v/5*100)+'%"></div></div>';}
+function showToast(msg,err){var t=document.getElementById('tst');t.textContent=msg;t.className='toast'+(err?' error-toast':'')+' show';setTimeout(function(){t.className='toast';},3500);}
+function fmtDate(d){var m=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],dt=new Date(d);return m[dt.getMonth()]+' '+dt.getFullYear();}
+function fmtSalary(amount,currency){
+  var sym={TRY:'₺',USD:'$',EUR:'€'};
+  return(sym[currency]||'')+Number(amount).toLocaleString('tr-TR');
+}
+
+// AUTH
+async function initAuth(){
+  var s=await sb.auth.getSession();
+  if(s.data.session) await onLogin(s.data.session.user);
+  sb.auth.onAuthStateChange(async function(ev,session){
+    if(session) await onLogin(session.user);
+    else onLogout();
+  });
+}
+
+async function onLogin(user){
+  currentUser=user;
+  var p=await sb.from('profiles').select('*').eq('id',user.id).single();
+  currentProfile=p.data;
+  renderNav();
+  var el=document.getElementById('previewUsername');
+  if(el) el.textContent=currentProfile&&currentProfile.username?currentProfile.username:user.email.split('@')[0];
+}
+
+function onLogout(){currentUser=null;currentProfile=null;renderNav();}
+
+function renderNav(){
+  var nr=document.getElementById('navRight');
+  if(currentUser){
+    var uname=currentProfile&&currentProfile.username?currentProfile.username:currentUser.email.split('@')[0];
+    nr.innerHTML='<div class="user-menu">'+
+      '<div class="user-avatar" onclick="toggleDropdown()">'+uname.substring(0,2).toUpperCase()+'</div>'+
+      '<div class="user-dropdown" id="userDropdown">'+
+      '<a style="font-weight:500;color:var(--text);cursor:default">'+uname+'</a>'+
+      '<a style="font-size:11px;color:var(--text3);padding-top:2px;cursor:default">'+currentUser.email+'</a>'+
+      '<div class="divider"></div>'+
+      '<a onclick="requireAuth(openReview)">+ Yorum Yaz</a>'+
+      '<a onclick="requireAuth(openSalary)">💰 Maaş Ekle</a>'+
+      '<div class="divider"></div>'+
+      '<a onclick="doLogout()" style="color:#993C1D">Çıkış Yap</a>'+
+      '</div></div>';
+  } else {
+    nr.innerHTML='<button class="btn-outline" onclick="openAuth(\'login\')">Giriş Yap</button><button class="btn-nav" onclick="openAuth(\'register\')">Üye Ol</button>';
+  }
+}
+
+function toggleDropdown(){var d=document.getElementById('userDropdown');if(d)d.classList.toggle('open');}
+async function doLogout(){await sb.auth.signOut();showToast('Çıkış yapıldı.');}
+
+function openAuth(mode){
+  authMode=mode||'login';
+  switchTab(authMode);
+  document.getElementById('authModal').classList.add('open');
+}
+
+function switchTab(mode){
+  authMode=mode;
+  document.getElementById('tab-login').classList.toggle('active',mode==='login');
+  document.getElementById('tab-register').classList.toggle('active',mode==='register');
+  document.getElementById('authTitle').textContent=mode==='login'?'Giriş Yap':'Üye Ol';
+  document.getElementById('authBtn').textContent=mode==='login'?'Giriş Yap':'Üye Ol';
+  document.getElementById('usernameField').style.display=mode==='register'?'block':'none';
+  document.getElementById('authNote').innerHTML=mode==='login'?
+    'Hesabınız yok mu? <a onclick="switchTab(\'register\')" style="color:var(--green-md);cursor:pointer">Üye olun</a>':
+    'Zaten üye misiniz? <a onclick="switchTab(\'login\')" style="color:var(--green-md);cursor:pointer">Giriş yapın</a>';
+}
+
+async function handleAuth(){
+  var email=document.getElementById('authEmail').value.trim();
+  var pass=document.getElementById('authPassword').value;
+  var btn=document.getElementById('authBtn');
+  if(!email||!pass){showToast('E-posta ve şifre zorunlu.',true);return;}
+  btn.disabled=true;btn.textContent='Lütfen bekleyin...';
+  try{
+    if(authMode==='register'){
+      var username=document.getElementById('authUsername').value.trim();
+      var r=await sb.auth.signUp({email:email,password:pass});
+      if(r.error)throw r.error;
+      if(username&&r.data.user){
+        await new Promise(function(res){setTimeout(res,1500);});
+        await sb.from('profiles').upsert({id:r.data.user.id,username:username},{onConflict:'id'});
+      }
+      showToast('Kayıt başarılı! E-postanızı doğrulayın.');
+      closeM('authModal');
+    } else {
+      var r=await sb.auth.signInWithPassword({email:email,password:pass});
+      if(r.error)throw r.error;
+      showToast('Hoş geldiniz!');
+      closeM('authModal');
+    }
+  }catch(e){
+    var msg=e.message||'Bir hata oluştu.';
+    if(msg.includes('Invalid login'))msg='E-posta veya şifre hatalı.';
+    if(msg.includes('already registered'))msg='Bu e-posta zaten kayıtlı.';
+    if(msg.includes('Password'))msg='Şifre en az 6 karakter olmalı.';
+    showToast(msg,true);
+  }
+  btn.disabled=false;btn.textContent=authMode==='login'?'Giriş Yap':'Üye Ol';
+}
+
+function requireAuth(fn){if(!currentUser){openAuth('login');return;}fn();}
+
+// VERİ
+async function loadData(){
+  try{
+    var res=await sb.from('companies').select('*, reviews(*), salaries(*)').order('created_at',{ascending:false});
+    if(res.error)throw res.error;
+    allCompanies=(res.data||[]).map(function(c){
+      var rv=c.reviews||[];
+      var sl=c.salaries||[];
+      var avg=rv.length?rv.reduce(function(s,r){return s+r.rating;},0)/rv.length:0;
+      var rec=rv.length?Math.round(rv.filter(function(r){return r.recommend==='yes';}).length/rv.length*100):0;
+      return Object.assign({},c,{avgRating:avg,recPct:rec,reviewCount:rv.length,salaryCount:sl.length});
+    });
+    visCompanies=allCompanies.slice();
+    render();updateStats();
+  }catch(e){
+    document.getElementById('clist').innerHTML='<div class="empty-state"><p>Veriler yüklenemedi.</p><span>Sayfayı yenileyin.</span></div>';
+  }
+}
+
+function updateStats(){
+  var totalRev=allCompanies.reduce(function(s,c){return s+c.reviewCount;},0);
+  var totalSal=allCompanies.reduce(function(s,c){return s+c.salaryCount;},0);
+  document.getElementById('stat-reviews').textContent=totalRev.toLocaleString('tr-TR');
+  document.getElementById('stat-companies').textContent=allCompanies.length.toLocaleString('tr-TR');
+  document.getElementById('stat-salaries').textContent=totalSal.toLocaleString('tr-TR');
+}
+
+function render(){
+  if(!visCompanies.length){document.getElementById('clist').innerHTML='<div class="empty-state"><p>Şirket bulunamadı.</p><span>İlk yorumu sen yaz!</span></div>';return;}
+  var html='';
+  visCompanies.forEach(function(c){
+    var col=getColor(c.name),ini=getInitials(c.name),rt=c.avgRating;
+    html+='<div class="ccard" onclick="showDet(\''+c.id+'\')">';
+    html+='<div class="cheader"><div class="clogo" style="background:'+col.bg+';color:'+col.fc+'">'+ini+'</div>';
+    html+='<div><div class="cname">'+c.name+'</div><div class="cmeta">'+(c.sector||'—')+' · '+(c.city||'—')+(c.size?' · '+c.size+' çalışan':'')+'</div></div>';
+    if(c.reviewCount>0)html+='<div class="rec-badge">%'+c.recPct+' tavsiye</div>';
+    html+='</div>';
+    if(c.reviewCount>0){
+      html+='<div class="rating-row"><div class="bigrating">'+rt.toFixed(1)+'</div>';
+      html+='<div><div class="stars-row">'+starSVG(rt)+'</div><div class="rcount">'+c.reviewCount+' yorum'+(c.salaryCount>0?' · '+c.salaryCount+' maaş verisi':'')+'</div></div></div>';
+    }else{
+      html+='<div style="font-size:13px;color:var(--text3);margin:6px 0 10px">Henüz yorum yok — ilk sen değerlendir!</div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('clist').innerHTML=html;
+}
+
+function doFilter(){
+  var q=document.getElementById('qi').value.toLowerCase().trim();
+  visCompanies=q?allCompanies.filter(function(c){return c.name.toLowerCase().includes(q)||(c.sector||'').toLowerCase().includes(q)||(c.city||'').toLowerCase().includes(q);}):allCompanies.slice();
+  render();
+}
+
+// DETAY
+async function showDet(id){
+  visCompanies=allCompanies.slice();
+  document.getElementById('detContent').innerHTML='<div class="loading"><div class="spinner"></div><br>Yükleniyor...</div>';
+  document.getElementById('detModal').classList.add('open');
+  try{
+    var c=allCompanies.find(function(x){return x.id===id;});
+    var col=getColor(c.name),ini=getInitials(c.name);
+    var revRes=await sb.from('reviews').select('*, profiles(username)').eq('company_id',id).order('created_at',{ascending:false});
+    var reviews=revRes.data||[];
+    var salRes=await sb.from('salaries').select('*').eq('company_id',id).order('created_at',{ascending:false});
+    var salaries=salRes.data||[];
+
+    var html='<div class="mhead"><div style="display:flex;align-items:center;gap:12px">';
+    html+='<div class="clogo" style="background:'+col.bg+';color:'+col.fc+';width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:15px">'+ini+'</div>';
+    html+='<div><h3>'+c.name+'</h3><div style="font-size:12px;color:var(--text2)">'+(c.sector||'—')+' · '+(c.city||'—')+'</div></div>';
+    html+='</div><button class="xbtn" onclick="closeM(\'detModal\')">×</button></div>';
+
+    if(reviews.length>0){
+      var avg=reviews.reduce(function(s,r){return s+r.rating;},0)/reviews.length;
+      var rec=Math.round(reviews.filter(function(r){return r.recommend==='yes';}).length/reviews.length*100);
+      html+='<div style="display:flex;align-items:center;gap:16px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:14px">';
+      html+='<div class="bigrating" style="font-size:42px">'+avg.toFixed(1)+'</div>';
+      html+='<div><div>'+starSVG(avg,18)+'</div><div style="font-size:12px;color:var(--text2);margin-top:4px">'+reviews.length+' değerlendirme · <span style="color:var(--green-md);font-weight:500">%'+rec+'</span> tavsiye eder</div></div></div>';
+    }
+
+    // Sekmeler
+    html+='<div class="det-tabs">';
+    html+='<button class="det-tab active" id="dt-reviews" onclick="switchDetTab(\'reviews\')">Yorumlar ('+reviews.length+')</button>';
+    html+='<button class="det-tab" id="dt-salaries" onclick="switchDetTab(\'salaries\')">Maaşlar ('+salaries.length+')</button>';
+    html+='</div>';
+
+    // Yorumlar
+    html+='<div id="det-reviews-content">';
+    if(reviews.length>0){
+      reviews.forEach(function(r){
+        var anon=r.is_anonymous!==false;
+        var uname=anon?'Anonim':(r.profiles&&r.profiles.username?r.profiles.username:'Çalışan');
+        var badge=anon?'<span class="anon-badge">anonim</span>':'<span class="named-badge">'+uname+'</span>';
+        html+='<div class="rev-item"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+        html+='<div><div class="rev-who">'+(r.position||'Çalışan')+''+badge+'</div><div style="margin-top:3px">'+starSVG(r.rating,13)+'</div></div>';
+        html+='<div class="rev-date">'+fmtDate(r.created_at)+'</div></div>';
+        if(r.pros||r.cons){html+='<div class="pc-grid">';if(r.pros)html+='<div class="pc-box pos"><div class="pc-label">Olumlu yönler</div><p>'+r.pros+'</p></div>';if(r.cons)html+='<div class="pc-box neg"><div class="pc-label">Geliştirilmeli</div><p>'+r.cons+'</p></div>';html+='</div>';}
+        if(r.advice)html+='<div class="advice-row"><strong style="font-weight:500;color:var(--green-md)">Yönetime tavsiye:</strong> '+r.advice+'</div>';
+        html+='<div class="helpful-row"><span class="helpful-label">Bu yorum faydalı mıydı?</span><button class="helpful-btn" onclick="this.textContent=\'👍 Evet\'">Evet</button><button class="helpful-btn" onclick="this.textContent=\'👎 Hayır\'">Hayır</button></div></div>';
+      });
+    }else{
+      html+='<div class="empty-state" style="padding:2rem 1rem"><p>Henüz yorum yok.</p><span>İlk yorumu sen yaz!</span></div>';
+    }
+    html+='</div>';
+
+    // Maaşlar
+    html+='<div id="det-salaries-content" style="display:none">';
+    if(salaries.length>0){
+      // Pozisyon bazlı grupla
+      var grouped={};
+      salaries.forEach(function(s){
+        if(!grouped[key])grouped[key]={position:s.position,currency:s.currency,amounts:[],entries:[]};
+        if(!grouped[key])grouped[key]={position:s.position,currency:s.currency,amounts:[],city:s.city};
+        grouped[key].amounts.push(s.salary); grouped[key].entries.push(s);
+      });
+      html+='<div style="font-size:12px;color:var(--text2);margin-bottom:12px">'+salaries.length+' maaş verisi · Pozisyon bazlı ortalamalar</div>';
+      Object.values(grouped).forEach(function(g){
+        var avg=g.amounts.reduce(function(a,b){return a+b;},0)/g.amounts.length;
+        var min=Math.min.apply(null,g.amounts);
+        var max=Math.max.apply(null,g.amounts);
+        html+='<div class="salary-row">';
+        html+='<div><div class="salary-position">'+g.position+'</div>';
+        html+='<div class="salary-meta" style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:3px">'+g.amounts.length+' veri ';g.entries.forEach(function(e){var anon=e.is_anonymous!==false;html+=anon?'<span class="anon-badge">anonim</span>':'<span class="named-badge">'+(e.city||'isimli')+'</span>';});html+='</div></div>';
+        html+='<div style="text-align:right"><div class="salary-amount">'+fmtSalary(Math.round(avg),g.currency)+'</div>';
+        html+='<div class="salary-currency">ort. · '+fmtSalary(min,g.currency)+' – '+fmtSalary(max,g.currency)+'</div></div>';
+        html+='</div>';
+      });
+    }else{
+      html+='<div class="empty-state" style="padding:2rem 1rem"><p>Henüz maaş verisi yok.</p><span>İlk maaş verisini sen ekle!</span></div>';
+    }
+    html+='</div>';
+
+    html+='<div style="display:flex;gap:8px;margin-top:1.5rem">';
+    html+='<button class="btn-full" style="margin-bottom:0" onclick="closeM(\'detModal\');requireAuth(function(){openReviewFor(\''+c.id+'\',\''+c.name.replace(/'/g,"\\'")+'\')})">Yorum Yaz</button>';
+    html+='<button class="btn-full-outline" onclick="closeM(\'detModal\');requireAuth(function(){openSalaryFor(\''+c.id+'\',\''+c.name.replace(/'/g,"\\'")+'\')})">Maaş Ekle</button>';
+    html+='</div>';
+
+    document.getElementById('detContent').innerHTML=html;
+  }catch(e){document.getElementById('detContent').innerHTML='<div class="empty-state"><p>Yüklenemedi.</p></div>';}
+}
+
+function switchDetTab(tab){
+  document.getElementById('dt-reviews').classList.toggle('active',tab==='reviews');
+  document.getElementById('dt-salaries').classList.toggle('active',tab==='salaries');
+  document.getElementById('det-reviews-content').style.display=tab==='reviews'?'block':'none';
+  document.getElementById('det-salaries-content').style.display=tab==='salaries'?'block':'none';
+}
+
+// YORUM
+function openReview(){
+  if(!currentUser){openAuth('login');return;}
+  selectedCompanyId=null;
+  document.getElementById('cni').value='';
+  var un=currentProfile&&currentProfile.username?currentProfile.username:currentUser.email.split('@')[0];
+  var el=document.getElementById('previewUsername');if(el)el.textContent=un;
+  document.getElementById('revModal').classList.add('open');
+}
+function openReviewFor(id,name){
+  if(!currentUser){openAuth('login');return;}
+  selectedCompanyId=id;
+  document.getElementById('cni').value=name;
+  document.getElementById('revModal').classList.add('open');
+}
+
+// MAAŞ
+function openSalary(){
+  if(!currentUser){openAuth('login');return;}
+  selectedSalCompanyId=null;
+  document.getElementById('sal-company').value='';
+  document.getElementById('salaryModal').classList.add('open');
+}
+function openSalaryFor(id,name){
+  if(!currentUser){openAuth('login');return;}
+  selectedSalCompanyId=id;
+  document.getElementById('sal-company').value=name;
+  document.getElementById('salaryModal').classList.add('open');
+}
+
+function setSalAnon(val){
+  isSalAnon=val;
+  document.getElementById('salAnonBtn').classList.toggle('sel',val);
+  document.getElementById('salNamedBtn').classList.toggle('sel',!val);
+}
+
+async function submitSalary(){
+  if(!currentUser){openAuth('login');return;}
+  var cn=document.getElementById('sal-company').value.trim();
+  var pos=document.getElementById('sal-position').value.trim();
+  var amt=document.getElementById('sal-amount').value;
+  if(!cn){showToast('Lütfen şirket adını girin.',true);return;}
+  if(!pos){showToast('Lütfen pozisyon girin.',true);return;}
+  if(!amt||amt<=0){showToast('Lütfen geçerli bir maaş girin.',true);return;}
+  var btn=document.getElementById('salSubmitBtn');
+  btn.disabled=true;btn.textContent='Kaydediliyor...';
+  try{
+    var cid=selectedSalCompanyId;
+    if(!cid){
+      var ex=await sb.from('companies').select('id').ilike('name',cn).single();
+      if(ex.data){cid=ex.data.id;}
+      else{var nc=await sb.from('companies').insert({name:cn}).select().single();if(nc.error)throw nc.error;cid=nc.data.id;}
+    }
+    var r=await sb.from('salaries').insert({
+      company_id:cid,user_id:currentUser.id,
+      position:pos,salary:parseFloat(amt),
+      currency:document.getElementById('sal-currency').value,
+      experience_years:parseInt(document.getElementById('sal-exp').value)||null,
+      city:document.getElementById('sal-city').value.trim()||null,
+      is_anonymous:isSalAnon
+    });
+    if(r.error)throw r.error;
+    closeM('salaryModal');
+    showToast('✓ Maaş verisi eklendi, teşekkürler!');
+    ['sal-company','sal-position','sal-amount','sal-exp','sal-city'].forEach(function(id){document.getElementById(id).value='';});
+    setSalAnon(true);selectedSalCompanyId=null;
+    await loadData();
+  }catch(e){showToast('Bir hata oluştu.',true);}
+  btn.disabled=false;btn.textContent='Maaş Verisini Ekle';
+}
+
+function closeM(id){
+  document.getElementById(id).classList.remove('open');
+  if(id==="detModal"){visCompanies=allCompanies.slice();render();}
+  ['acList','sal-acList'].forEach(function(ac){var el=document.getElementById(ac);if(el)el.style.display='none';});
+}
+function setSt(n){selSt=n;document.querySelectorAll('#sp .starbtn').forEach(function(b,i){b.classList.toggle('on',i<n);});}
+function setV(v){selV=v;var m={yes:'vr',neutral:'vn',no:'vx'};Object.keys(m).forEach(function(k){document.getElementById(m[k]).classList.toggle('sel',k===v);});}
+function setAnon(val){
+  isAnon=val;
+  document.getElementById('anonBtn').classList.toggle('sel',val);
+  document.getElementById('namedBtn').classList.toggle('sel',!val);
+  document.getElementById('anonNote').textContent=val?'Yorumunuz anonim olarak yayınlanacak.':'Yorumunuz kullanıcı adınızla yayınlanacak.';
+  document.getElementById('submitBtn').textContent=val?'Anonim Olarak Gönder':'İsimli Olarak Gönder';
+}
+function toggleSalarySection(){
+  var show=document.getElementById('salaryToggle').checked;
+  document.getElementById('salarySection').style.display=show?'block':'none';
+}
+
+function onCompanyInput(inputId,listId){
+  var isRev=inputId==='cni';
+  if(isRev)selectedCompanyId=null; else selectedSalCompanyId=null;
+  var q=document.getElementById(inputId).value.toLowerCase().trim();
+  var ac=document.getElementById(listId);
+  if(!q||q.length<2){ac.style.display='none';return;}
+  var m=allCompanies.filter(function(c){return c.name.toLowerCase().includes(q);}).slice(0,5);
+  if(!m.length){ac.style.display='none';return;}
+  ac.innerHTML=m.map(function(c){return'<div class="autocomplete-item" onclick="selectCompany(\''+c.id+'\',\''+c.name.replace(/'/g,"\\'")+'\',\''+inputId+'\',\''+listId+'\')">'+c.name+'</div>';}).join('');
+  ac.style.display='block';
+}
+
+function selectCompany(id,name,inputId,listId){
+  if(inputId==='cni')selectedCompanyId=id; else selectedSalCompanyId=id;
+  document.getElementById(inputId).value=name;
+  document.getElementById(listId).style.display='none';
+}
+
+async function submitR(){
+  if(!currentUser){openAuth('login');return;}
+  var cn=document.getElementById('cni').value.trim();
+  if(!cn){showToast('Lütfen şirket adını girin.',true);return;}
+  if(!selSt){showToast('Lütfen bir puan seçin.',true);return;}
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='Gönderiliyor...';
+  try{
+    var cid=selectedCompanyId;
+    if(!cid){
+      var ex=await sb.from('companies').select('id').ilike('name',cn).single();
+      if(ex.data){cid=ex.data.id;}
+      else{var nc=await sb.from('companies').insert({name:cn,sector:document.getElementById('secInput').value.trim()||null,city:document.getElementById('cityInput').value.trim()||null,size:document.getElementById('sizeInput').value.trim()||null}).select().single();if(nc.error)throw nc.error;cid=nc.data.id;}
+    }
+    var rr=await sb.from('reviews').insert({company_id:cid,user_id:currentUser.id,is_anonymous:isAnon,position:document.getElementById('posi').value.trim()||null,rating:selSt,recommend:selV||null,pros:document.getElementById('pti').value.trim()||null,cons:document.getElementById('cti').value.trim()||null,advice:document.getElementById('advi').value.trim()||null});
+    if(rr.error)throw rr.error;
+    // Maaş bilgisi varsa kaydet
+    var salToggle=document.getElementById("salaryToggle");
+    if(salToggle&&salToggle.checked){
+      var salAmt=document.getElementById("rev-sal-amount").value;
+      var salPos=document.getElementById("posi").value.trim();
+      if(salAmt&&parseFloat(salAmt)>0&&salPos){
+        await sb.from("salaries").insert({company_id:cid,user_id:currentUser.id,position:salPos,salary:parseFloat(salAmt),currency:document.getElementById("rev-sal-currency").value,experience_years:parseInt(document.getElementById("rev-sal-exp").value)||null,city:document.getElementById("cityInput").value.trim()||null,is_anonymous:isAnon});
+      }
+    }
+    closeM('revModal');
+    showToast(isAnon?'✓ Anonim yorumunuz gönderildi!':'✓ Yorumunuz yayınlandı!');
+    ['cni','secInput','cityInput','sizeInput','posi','pti','cti','advi'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+    setSt(0);setV('');setAnon(true);selectedCompanyId=null;
+    await loadData();
+  }catch(e){showToast('Bir hata oluştu.',true);}
+  btn.disabled=false;btn.textContent=isAnon?'Anonim Olarak Gönder':'İsimli Olarak Gönder';
+}
+
+function renderSecs(){document.getElementById('seclist').innerHTML=secs.map(function(s){return'<div class="catrow" onclick="document.getElementById(\'qi\').value=\''+s+'\';doFilter()"><span>'+s+'</span></div>';}).join('');}
+function renderTags(){document.getElementById('ptags').innerHTML=ptags.map(function(t){return'<span class="ctag" style="cursor:pointer" onclick="document.getElementById(\'qi\').value=\''+t+'\';doFilter()">'+t+'</span>';}).join('');}
+
+document.querySelectorAll('.overlay').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#cni')&&!e.target.closest('#acList')){var ac=document.getElementById('acList');if(ac)ac.style.display='none';}
+  if(!e.target.closest('#sal-company')&&!e.target.closest('#sal-acList')){var ac=document.getElementById('sal-acList');if(ac)ac.style.display='none';}
+  if(!e.target.closest('.user-menu')){var dd=document.getElementById('userDropdown');if(dd)dd.classList.remove('open');}
+});
+
+initAuth();loadData();renderSecs();renderTags();
+</script>
+</body>
+</html>
