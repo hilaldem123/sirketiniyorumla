@@ -166,7 +166,7 @@ async function loadAll(){
   var results=await Promise.all([
     sb.from('reviews').select('*, companies(id,name,sector,city)').eq('user_id',currentUser.id).order('created_at',{ascending:false}),
     sb.from('salaries').select('*, companies(id,name,sector,city)').eq('user_id',currentUser.id).order('created_at',{ascending:false}),
-    sb.from('company_follows').select('*, companies(id,name,sector,city,reviews(rating))').eq('user_id',currentUser.id).order('created_at',{ascending:false})
+    sb.from('company_follows').select('*, companies(id,name,sector,city)').eq('user_id',currentUser.id).order('created_at',{ascending:false})
   ]);
 
   var reviews=results[0].data||[];
