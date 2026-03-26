@@ -594,8 +594,8 @@ async function showDet(id){
     html+='</div>';
 
     html+='<div style="display:flex;gap:8px;margin-top:1.5rem">';
-    html+='<button class="btn-full" style="margin-bottom:0" onclick="closeM('detModal');requireAuth(function(){openReviewFor(''+c.id+'')})"'>Yorum Yaz</button>';
-    html+='<button class="btn-full-outline" onclick="closeM('detModal');requireAuth(function(){openSalaryFor(''+c.id+'')})"'>Maaş Ekle</button>';
+    html+='<button class="btn-full" style="margin-bottom:0" onclick="closeM(\'detModal\');requireAuth(function(){openReviewFor(\''+c.id+'\')})">Yorum Yaz</button>';
+    html+='<button class="btn-full-outline" onclick="closeM(\'detModal\');requireAuth(function(){openSalaryFor(\''+c.id+'\')})">Maaş Ekle</button>';
     html+='</div>';
 
     document.getElementById('detContent').innerHTML=html;
