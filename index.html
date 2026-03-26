@@ -521,7 +521,10 @@ async function showDet(id){
   visCompanies=allCompanies.slice();
   document.getElementById('detContent').innerHTML='<div class="loading"><div class="spinner"></div><br>Yükleniyor...</div>';
   document.getElementById('detModal').classList.add('open');
-  try{
+  try{console.log('showDet başladı, id:', id);
+console.log('allCompanies:', allCompanies.length);
+var c=allCompanies.find(function(x){return x.id===id;});
+console.log('c bulundu:', c);
     var c=allCompanies.find(function(x){return x.id===id;});
     var col=getColor(c.name),ini=getInitials(c.name);
     var revRes=await sb.from('reviews').select('*, profiles(username)').eq('company_id',id).order('created_at',{ascending:false});
