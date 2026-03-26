@@ -618,14 +618,13 @@ function openReview(){
   var un=currentProfile&&currentProfile.username?currentProfile.username:currentUser.email.split('@')[0];
   var el=document.getElementById('previewUsername');if(el)el.textContent=un;
   document.getElementById('revModal').classList.add('open');
-}
+
 function openReviewFor(id){
   if(!currentUser){openAuth('login');return;}
   selectedCompanyId=id;
   var c=allCompanies.find(function(x){return x.id===id;});
   document.getElementById('cni').value=c?c.name:'';
   document.getElementById('revModal').classList.add('open');
-}
 }
 
 // MAAŞ
@@ -641,7 +640,6 @@ function openSalaryFor(id){
   var c=allCompanies.find(function(x){return x.id===id;});
   document.getElementById('sal-company').value=c?c.name:'';
   document.getElementById('salaryModal').classList.add('open');
-}
 }
 
 function setSalAnon(val){
