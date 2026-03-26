@@ -600,8 +600,7 @@ async function showDet(id){
     html+='</div>';
 
     document.getElementById('detContent').innerHTML=html;
-  }catch(e){document.getElementById('detContent').innerHTML='<div class="empty-state"><p>Yüklenemedi.</p></div>';}
-}
+  }catch(e){console.error('showDet hatası:',e);document.getElementById('detContent').innerHTML='<div class="empty-state"><p>Yüklenemedi: '+e.message+'</p></div>';}
 
 function switchDetTab(tab){
   document.getElementById('dt-reviews').classList.toggle('active',tab==='reviews');
