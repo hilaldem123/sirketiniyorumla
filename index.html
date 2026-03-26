@@ -521,10 +521,7 @@ async function showDet(id){
   visCompanies=allCompanies.slice();
   document.getElementById('detContent').innerHTML='<div class="loading"><div class="spinner"></div><br>Yükleniyor...</div>';
   document.getElementById('detModal').classList.add('open');
-  try{console.log('showDet başladı, id:', id);
-console.log('allCompanies:', allCompanies.length);
-var c=allCompanies.find(function(x){return x.id===id;});
-console.log('c bulundu:', c);
+  try{
     var c=allCompanies.find(function(x){return x.id===id;});
     var col=getColor(c.name),ini=getInitials(c.name);
     var revRes=await sb.from('reviews').select('*, profiles(username)').eq('company_id',id).order('created_at',{ascending:false});
@@ -576,8 +573,7 @@ console.log('c bulundu:', c);
       // Pozisyon bazlı grupla
       var grouped={};
       salaries.forEach(function(s){
-        if(!grouped[key])grouped[key]={position:s.position,currency:s.currency,amounts:[],entries:[]};
-        if(!grouped[key])grouped[key]={position:s.position,currency:s.currency,amounts:[],city:s.city};
+        var key=s.position+"|"+s.currency;if(!grouped[key])grouped[key]={position:s.position,currency:s.currency,amounts:[],entries:[]};
         grouped[key].amounts.push(s.salary); grouped[key].entries.push(s);
       });
       html+='<div style="font-size:12px;color:var(--text2);margin-bottom:12px">'+salaries.length+' maaş verisi · Pozisyon bazlı ortalamalar</div>';
@@ -598,12 +594,13 @@ console.log('c bulundu:', c);
     html+='</div>';
 
     html+='<div style="display:flex;gap:8px;margin-top:1.5rem">';
-    html+='<button class="btn-full" style="margin-bottom:0" onclick="closeM(\'detModal\');requireAuth(function(){openReviewFor(\''+c.id+'\',\''+c.name.replace(/'/g,"\\'")+'\')})">Yorum Yaz</button>';
-    html+='<button class="btn-full-outline" onclick="closeM(\'detModal\');requireAuth(function(){openSalaryFor(\''+c.id+'\',\''+c.name.replace(/'/g,"\\'")+'\')})">Maaş Ekle</button>';
+    html+='<button class="btn-full" style="margin-bottom:0" onclick="closeM('detModal');requireAuth(function(){openReviewFor(''+c.id+'')})"'>Yorum Yaz</button>';
+    html+='<button class="btn-full-outline" onclick="closeM('detModal');requireAuth(function(){openSalaryFor(''+c.id+'')})"'>Maaş Ekle</button>';
     html+='</div>';
 
     document.getElementById('detContent').innerHTML=html;
-  }catch(e){console.error('showDet hatası:',e);document.getElementById('detContent').innerHTML='<div class="empty-state"><p>Yüklenemedi: '+e.message+'</p></div>';}
+  }catch(e){document.getElementById('detContent').innerHTML='<div class="empty-state"><p>Yüklenemedi.</p></div>';}
+}
 
 function switchDetTab(tab){
   document.getElementById('dt-reviews').classList.toggle('active',tab==='reviews');
@@ -624,10 +621,10 @@ function openReview(){
 function openReviewFor(id){
   if(!currentUser){openAuth('login');return;}
   selectedCompanyId=id;
-  var c=allCompanies.find(function(x){return x.id===id;});
-  document.getElementById('cni').value=c?c.name:'';
+  var c=allCompanies.find(function(x){return x.id===id;});document.getElementById("cni").value=c?c.name:"";
   document.getElementById('revModal').classList.add('open');
 }
+
 // MAAŞ
 function openSalary(){
   if(!currentUser){openAuth('login');return;}
@@ -638,8 +635,7 @@ function openSalary(){
 function openSalaryFor(id){
   if(!currentUser){openAuth('login');return;}
   selectedSalCompanyId=id;
-  var c=allCompanies.find(function(x){return x.id===id;});
-  document.getElementById('sal-company').value=c?c.name:'';
+  var c=allCompanies.find(function(x){return x.id===id;});document.getElementById("sal-company").value=c?c.name:"";
   document.getElementById('salaryModal').classList.add('open');
 }
 
