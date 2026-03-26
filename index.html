@@ -618,7 +618,7 @@ function openReview(){
   var un=currentProfile&&currentProfile.username?currentProfile.username:currentUser.email.split('@')[0];
   var el=document.getElementById('previewUsername');if(el)el.textContent=un;
   document.getElementById('revModal').classList.add('open');
-
+}
 function openReviewFor(id){
   if(!currentUser){openAuth('login');return;}
   selectedCompanyId=id;
@@ -626,7 +626,6 @@ function openReviewFor(id){
   document.getElementById('cni').value=c?c.name:'';
   document.getElementById('revModal').classList.add('open');
 }
-
 // MAAŞ
 function openSalary(){
   if(!currentUser){openAuth('login');return;}
