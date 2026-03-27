@@ -602,9 +602,7 @@ async function handleAuth(){
       var username=document.getElementById('authUsername').value.trim();
       var r=await sb.auth.signUp({email:email,password:pass});
       if(r.error)throw r.error;
-      if(username&&r.data.user){await new Promise(function(res){setTimeout(res,1500);});var titleEl=document.getElementById('authTitle');var titleVal=titleEl?titleEl.value.trim():'';
-      var companyEl=document.getElementById('authCompany');var companyVal=companyEl?companyEl.value.trim():'';
-      await sb.from('profiles').upsert({id:r.data.user.id,username:username,title:titleVal||null,company:companyVal||null},{onConflict:'id'});}
+      if(username&&r.data.user){await new Promise(function(res){setTimeout(res,1500);});var titleEl=document.getElementById('authTitle');var titleVal=titleEl?titleEl.value.trim():'';var companyEl=document.getElementById('authCompany');var companyVal=companyEl?companyEl.value.trim():'';await sb.from('profiles').upsert({id:r.data.user.id,username:username,title:titleVal||null,company:companyVal||null},{onConflict:'id'});}
       showToast('Kayıt başarılı! E-postanızı doğrulayın.');closeM('authModal');
     } else {
       var r=await sb.auth.signInWithPassword({email:email,password:pass});
