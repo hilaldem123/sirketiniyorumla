@@ -599,7 +599,7 @@ async function handleAuth(){
   btn.disabled=true;btn.textContent='Lütfen bekleyin...';
   try{
     if(authMode==='register'){
-      var usernameEl=document.getElementById('authUsername');var username=usernameEl?usernameEl.value.trim():'';
+      var usernameEl=document.getElementById('authUsername');var username=usernameEl&&usernameEl.offsetParent!==null?usernameEl.value.trim():usernameEl?usernameEl.value.trim():'';
       var r=await sb.auth.signUp({email:email,password:pass});
       if(r.error)throw r.error;
       if(username&&r.data.user){await new Promise(function(res){setTimeout(res,1500);});var titleEl=document.getElementById('authTitle');var titleVal=titleEl?titleEl.value.trim():'';var companyEl=document.getElementById('authCompany');var companyVal=companyEl?companyEl.value.trim():'';await sb.from('profiles').upsert({id:r.data.user.id,username:username,title:titleVal||null,company:companyVal||null},{onConflict:'id'});}
